@@ -3,6 +3,7 @@ package com.example.stopwatch;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -14,6 +15,7 @@ public class MainActivity extends AppCompatActivity {
     private Button start_stop;
     private Button reset;
     private Chronometer time;
+    private long old_base = 0;
 
     //Log Priority (lowest to highest)
     //Verbose, Debug, Info, Warning, Error, Assert
@@ -29,22 +31,33 @@ public class MainActivity extends AppCompatActivity {
     public void setListeners(){
         start_stop.setOnClickListener(new View.OnClickListener() {
             boolean running = false;
-            long old_base;
-            long new_base;
             @Override
             public void onClick(View view) {
+                if(old_base == 0) {
+                    old_base = SystemClock.elapsedRealtime();
+                }
+
                 if(!running) {
-                    new_base = time.getBase();
-                    running = true;
+                    time.setBase(SystemClock.elapsedRealtime() - old_base + time.getBase());
                     time.start();
                     start_stop.setText("Stop");
+                    running = true;
                 }
                 else {
-                    old_base = time.getBase();
+                    old_base = SystemClock.elapsedRealtime();
                     time.stop();
                     start_stop.setText("Start");
                     running = false;
                 }
+            }
+        });
+
+        reset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                time.stop();
+                time.setBase(SystemClock.elapsedRealtime());
+                old_base = SystemClock.elapsedRealtime();
             }
         });
     }
