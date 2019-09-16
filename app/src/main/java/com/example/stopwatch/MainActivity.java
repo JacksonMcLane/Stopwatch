@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (old_base == 0) {
                     old_base = SystemClock.elapsedRealtime();
+                    time.setBase(SystemClock.elapsedRealtime());
                 }
 
                 if (!running) {
@@ -78,7 +79,6 @@ public class MainActivity extends AppCompatActivity {
         //Log.d(TAG, "onCreate: ");
         wireWidgets();
         setListeners();
-        time.stop();
         if(savedInstanceState != null) {
             if(time.getBase() != 0) {
                 time.setBase(savedInstanceState.getLong(KEY_CHRONOMETER_BASE));
